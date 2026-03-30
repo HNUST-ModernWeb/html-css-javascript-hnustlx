@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人信息卡片</title>
+  <link rel="preconnect" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --text-color: #e0e0e0;
+      --accent-color: #4a9eff;
+      --secondary-bg: #252525;
+      --border-color: #333;
+      --card-bg: #2a2a2a;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f5f5f5;
+      --text-color: #333;
+      --accent-color: #2563eb;
+      --secondary-bg: #fff;
+      --border-color: #e5e5e5;
+      --card-bg: #fff;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 32px;
+      color: var(--accent-color);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 50px 40px;
+      text-align: center;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--accent-color);
+      box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+    }
+
+    .avatar-upload {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--accent-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+      overflow: hidden;
+    }
+
+    .avatar-upload:hover {
+      transform: scale(1.1);
+      background: #3a8eef;
+    }
+
+    .avatar-upload input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .avatar-upload i {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .info-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .info-group label {
+      display: block;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .info-group input,
+    .info-group textarea {
+      width: 100%;
+      padding: 15px 18px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background: var(--secondary-bg);
+      color: var(--text-color);
+    }
+
+    .info-group input:focus,
+    .info-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+      background: var(--card-bg);
+    }
+
+    .info-group textarea {
+      resize: none;
+      min-height: 120px;
+    }
+
+    .display-info {
+      margin-bottom: 25px;
+    }
+
+    .display-name {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+
+    .display-bio {
+      font-size: 14px;
+      color: var(--text-color);
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .info-group label {
+      color: var(--text-color);
+      opacity: 0.7;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      color: #333;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    [data-theme="dark"] .theme-toggle {
+      background: #1a1a1a;
+      border-color: #333;
+      color: #e0e0e0;
+    }
+
+    [data-theme="light"] .theme-toggle {
+      background: #1a1a1a;
+      border-color: #333;
+      color: #e0e0e0;
+    }
+
+    .btn {
+      padding: 14px 40px;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4a9eff, #10b981);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .avatar-wrapper {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <button class="theme-toggle" id="theme-toggle-btn" title="切换主题">
+    <i class="fas fa-sun"></i>
+  </button>
+  
+  <div class="container">
+    <h1>个人信息卡片</h1>
+    
+    <div class="card">
+      <div class="avatar-wrapper">
+        <img id="avatar-img" class="avatar" src="小熊.jpg" alt="头像">
+        <label class="avatar-upload">
+          <input type="file" id="avatar-input" accept="image/*">
+          <i class="fas fa-camera"></i>
+        </label>
+      </div>
+
+      <div id="display-view" class="display-info">
+        <div id="display-name" class="display-name">罗鑫</div>
+        <div id="display-bio" class="display-bio">你好！我是罗鑫，现就读于湖南科技大学计算机科学与技术专业，正在攻读学士学位。我对计算机科学充满热情，热衷于学习和实践编程技术。</div>
+      </div>
+
+      <div id="edit-view" class="hidden">
+        <div class="info-group">
+          <label for="name-input">姓名</label>
+          <input type="text" id="name-input" placeholder="请输入姓名">
+        </div>
+        <div class="info-group">
+          <label for="bio-input">个人简介</label>
+          <textarea id="bio-input" placeholder="请输入个人简介"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button id="edit-btn" class="btn btn-primary">编辑</button>
+        <button id="save-btn" class="btn btn-primary hidden">保存</button>
+        <button id="cancel-btn" class="btn btn-primary hidden" style="background: #999;">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const displayView = document.getElementById('display-view');
+    const editView = document.getElementById('edit-view');
+    const displayName = document.getElementById('display-name');
+    const displayBio = document.getElementById('display-bio');
+    const nameInput = document.getElementById('name-input');
+    const bioInput = document.getElementById('bio-input');
+    const avatarImg = document.getElementById('avatar-img');
+    const avatarInput = document.getElementById('avatar-input');
+    const editBtn = document.getElementById('edit-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
+    const defaultName = '罗鑫';
+    const defaultBio = '你好！我是罗鑫，湖南科技大学计算机科学与技术专业本科在读。我热爱计算机科学，具备较强的学习能力和实践热情。目前正在学习和实践“苍穹外卖”项目，掌握了 Java、Spring Boot、Spring MVC、MyBatis、MySQL、Redis、Maven、Git 等相关技术，并持续提升自己的 Java 后端开发与项目实战能力';
+    const defaultAvatar = '小熊.jpg';
+
+    let currentName = localStorage.getItem('userName') || defaultName;
+    let currentBio = localStorage.getItem('userBio') || defaultBio;
+    let currentAvatar = localStorage.getItem('userAvatar') || defaultAvatar;
+
+    displayName.textContent = currentName;
+    displayBio.textContent = currentBio;
+    avatarImg.src = currentAvatar;
+
+    avatarInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          avatarImg.src = event.target.result;
+          currentAvatar = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    editBtn.addEventListener('click', function() {
+      nameInput.value = currentName;
+      bioInput.value = currentBio;
+      displayView.classList.add('hidden');
+      editView.classList.remove('hidden');
+      editBtn.classList.add('hidden');
+      saveBtn.classList.remove('hidden');
+      cancelBtn.classList.remove('hidden');
+    });
+
+    cancelBtn.addEventListener('click', function() {
+      displayView.classList.remove('hidden');
+      editView.classList.add('hidden');
+      editBtn.classList.remove('hidden');
+      saveBtn.classList.add('hidden');
+      cancelBtn.classList.add('hidden');
+    });
+
+    saveBtn.addEventListener('click', function() {
+      currentName = nameInput.value.trim() || '未设置';
+      currentBio = bioInput.value.trim() || '未设置';
+      
+      displayName.textContent = currentName;
+      displayBio.textContent = currentBio;
+      
+      try {
+        localStorage.setItem('userName', currentName);
+        localStorage.setItem('userBio', currentBio);
+        localStorage.setItem('userAvatar', currentAvatar);
+      } catch (e) {}
+      
+      displayView.classList.remove('hidden');
+      editView.classList.add('hidden');
+      editBtn.classList.remove('hidden');
+      saveBtn.classList.add('hidden');
+      cancelBtn.classList.add('hidden');
+    });
+
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = themeToggleBtn.querySelector('i');
+    
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.body.setAttribute('data-theme', newTheme);
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      
+      try {
+        localStorage.setItem('theme', newTheme);
+      } catch (e) {}
+    });
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      document.body.setAttribute('data-theme', 'light');
+      document.documentElement.setAttribute('data-theme', 'light');
+      themeIcon.className = 'fas fa-moon';
+    }
+  </script>
+</body>
+</html>
